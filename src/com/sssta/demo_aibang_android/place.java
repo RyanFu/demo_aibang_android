@@ -144,5 +144,10 @@ public class place {
 		temp_place.setTel(jsonObject.getString("tel"));
 		return temp_place;
 	}
+	public static JSONArray jsonStringtoArray(String jsonString) throws JSONException{
+		JSONObject  jsonObject = new JSONObject(jsonString);
+		
+		return  null;
+	}
 	
 }
