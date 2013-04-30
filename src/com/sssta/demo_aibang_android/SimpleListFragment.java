@@ -144,6 +144,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 		 */
 		Toast.makeText(getActivity(), getListView().getItemAtPosition(position).toString(), Toast.LENGTH_LONG).show();
 	}
+	//创建adapter
 	class ItemAdapter extends BaseAdapter {
 
 		private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
