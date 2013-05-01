@@ -2,13 +2,15 @@ package com.sssta.demo_aibang_android;
 
 import java.io.IOException;
 
+import com.sssta.demo_aibang_android.R.string;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
-
+	private String resultString = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -16,12 +18,19 @@ public class MainActivity extends FragmentActivity {
 	//	SimpleListFragment simpleListFragment = new SimpleListFragment();
 	//	getSupportFragmentManager().beginTransaction().replace(R.id.container, simpleListFragment).commit();
 		TextView testTextView =(TextView) findViewById(R.id.test_testview);
-		try {
-			testTextView.setText(Client.ReceiveFromServer());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		 new Thread(new Runnable() {
+		        public void run() {
+		        try {
+					Client client = new Client();
+		        	resultString = client.ReceiveFromServer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        }
+		    }).start();
+		 testTextView.setText(resultString);
 	}
 
 	@Override

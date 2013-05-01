@@ -89,16 +89,10 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 		 *控件绑定 
 		 */
 	
-		/**
-		 * 数据初始化，从server获取数据
-		 */
-		try {
-			jsonString = Client.ReceiveFromServer();
-			Log.e("receive", jsonString);
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+		//暂时注释掉
+		//jsonString = Client.ReceiveFromServer();
+		jsonString = null;
+		Log.e("receive", jsonString);
 		/**
 		 * 解析返回的json数据，读取到list中
 		 */
