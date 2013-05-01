@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.util.Log;
+
 
 public class Client {
 	
@@ -32,15 +34,17 @@ public class Client {
 			//		System.out.println("Client:"+readline);
 			//在系统标准输出上打印读入的字符串
 			System.out.println("Server:"+is.readLine());
+			
 				//从Server读入一字符串，并打印到标准输出上
 			//readline=sin.readLine(); //从系统标准输入读入一字符串
 			os.close(); //关闭Socket输出流
 			is.close(); //关闭Socket输入流
 			socket.close(); //关闭Socket
-
+			Log.e("normal", "success");
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Error:"+e);
+			Log.e("error1", "error");
 		}
 	
 		return "1234";
