@@ -6,31 +6,49 @@ import com.sssta.demo_aibang_android.R.string;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
 	private String resultString = null;
+	private TextView testTextView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	//	SimpleListFragment simpleListFragment = new SimpleListFragment();
 	//	getSupportFragmentManager().beginTransaction().replace(R.id.container, simpleListFragment).commit();
-		TextView testTextView =(TextView) findViewById(R.id.test_testview);
+		testTextView =(TextView) findViewById(R.id.test_testview);
 		
 		 new Thread(new Runnable() {
 		        public void run() {
 		        try {
 					Client client = new Client();
 		        	resultString = client.ReceiveFromServer();
+		        
+		        	if(resultString!=null)
+		        	Log.i("resultString", resultString);
+		        	else {
+		        		Log.i("resultString", "null");
+					}
+		        	testTextView.post( new  Runnable() {
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							testTextView.setText(resultString);
+						}
+					});
+		        	
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		        }
 		    }).start();
-		 testTextView.setText(resultString);
+		
+		
 	}
 
 	@Override
