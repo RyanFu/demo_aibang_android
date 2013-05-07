@@ -11,10 +11,12 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -199,5 +201,29 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 			}
 		}
 	}
-	
+	/*
+	 * 使用asnyctask方式进行线程处理
+	 */
+	private class DownloadTask extends AsyncTask<Void, integer, String>
+	{
+		
+		String resultString;
+		@Override
+		protected String doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			Client client = new Client();
+        	try {
+				resultString = client.ReceiveFromServer();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return resultString;
+			
+		}
+		 protected void onPostExecute(String result) {
+	        //testTextView.setText(result);
+	     }
+			
+		}
 }
