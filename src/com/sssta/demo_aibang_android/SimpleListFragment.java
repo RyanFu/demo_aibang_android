@@ -55,7 +55,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState); 
 		 context = getActivity();  
 	       activity = getActivity();
 		/**
