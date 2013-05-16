@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
-	private String resultString = null;
+	//private String resultString = null;
 	private TextView testTextView;
 	public static final String ipAddress = "192.168.1.135"; 
 	@Override
@@ -70,7 +70,7 @@ public class MainActivity extends FragmentActivity {
 	private class DownloadTask extends AsyncTask<Void, integer, String>
 	{
 		
-		
+		String resultString = null;
 		@Override
 		protected String doInBackground(Void... params) {
 			// TODO Auto-generated method stub
