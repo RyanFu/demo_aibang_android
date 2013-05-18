@@ -22,7 +22,7 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 	//	SimpleListFragment simpleListFragment = new SimpleListFragment();
 	//	getSupportFragmentManager().beginTransaction().replace(R.id.container, simpleListFragment).commit();
-		testTextView =(TextView) findViewById(R.id.test_testview);
+	//	testTextView =(TextView) findViewById(R.id.test_testview);
 		/*
 		 *使用post的方式把对ui tookit的控制加入到主线程
 		 */
