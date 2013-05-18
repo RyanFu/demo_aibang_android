@@ -52,7 +52,7 @@ public class MainActivity extends FragmentActivity {
 			  
 		        }
 		    }).start();*/
-		new DownloadTask().execute();
+	//	new DownloadTask().execute();
 		
 		
 		
@@ -67,7 +67,7 @@ public class MainActivity extends FragmentActivity {
 	/*
 	 * 使用asnyctask方式进行线程处理
 	 */
-	private class DownloadTask extends AsyncTask<Void, integer, String>
+	/*private class DownloadTask extends AsyncTask<Void, integer, String>
 	{
 		
 		String resultString = null;
@@ -88,7 +88,7 @@ public class MainActivity extends FragmentActivity {
 	        testTextView.setText(result);
 	     }
 			
-		}
+		}*/
 		
 	}
 
