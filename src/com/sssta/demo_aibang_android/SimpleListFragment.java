@@ -58,6 +58,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 		super.onCreate(savedInstanceState); 
 		 context = getActivity();  
 	       activity = getActivity();
+          new DownloadTask().execute();
 		/**
 		 * uniserve-image-loader 初始化
 		 */
@@ -92,7 +93,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 		 */
 	
 		//暂时注释掉
-		//jsonString = Client.ReceiveFromServer();
+		
 		jsonString = null;
 		Log.e("receive", jsonString);
 		/**
