@@ -48,9 +48,10 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState); 
+		//获取上下文对象
 		 context = getActivity();  
 	       activity = getActivity();
-	   /*
+	   /**
 	    * 加载 universe-image-loader 设置
 	    */
 	   	File cacheDir = StorageUtils.getOwnCacheDirectory(context, "UniversalImageLoader/Cache");
