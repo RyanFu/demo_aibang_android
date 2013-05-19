@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SimpleAdapter.ViewBinder;
 
+
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -54,6 +55,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 	private String jsonString;
 //	private ListView listView;
 	private List<Map<String, Object>> mData=null;
+	
 	public Context context; // 存储上下文对象  
     public Activity activity; // 存储上下文对象  
 	
@@ -65,12 +67,39 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 		super.onCreate(savedInstanceState); 
 		 context = getActivity();  
 	       activity = getActivity();
-	   
+	   /*
+	    * 加载 universe-image-loader 设置
+	    */
+	   	File cacheDir = StorageUtils.getOwnCacheDirectory(context, "UniversalImageLoader/Cache");
+		// Get singletone instance of ImageLoader
+		imageLoader = ImageLoader.getInstance();
+		// Create configuration for ImageLoader (all options are optional, use only those you really want to customize)
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+		            .memoryCacheExtraOptions(480, 800) // max width, max height
+		            .discCacheExtraOptions(480, 800, CompressFormat.JPEG, 75) // Can slow ImageLoader, use it carefully (Better don't use it)
+		            .threadPoolSize(3)
+		            .threadPriority(Thread.NORM_PRIORITY - 1)
+		            .denyCacheImageMultipleSizesInMemory()         
+		            .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024)) // You can pass your own memory cache implementation
+		            .discCache(new UnlimitedDiscCache(cacheDir)) // You can pass your own disc cache implementation
+		            .discCacheFileNameGenerator(new HashCodeFileNameGenerator())
+		            .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
+		            .enableLogging()
+		            .build();
+		
+		// Initialize ImageLoader with created configuration. Do it once on Application start.
+		imageLoader.init(config);
+		// Creates display image options for custom display task (all options are optional)
+		options = new DisplayImageOptions.Builder()
+        .cacheInMemory()
+        .cacheOnDisc()
+        .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+        .displayer(new FakeBitmapDisplayer())
+        .build();
+		//universe-image-loader 设置结束
        new DownloadTask().execute();	
        
-		/**
-		 * 解析返回的json数据，读取到list中
-	*/
+		
          
 	
 		
@@ -81,26 +110,8 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.simple_list_fragment, container, false);
 	}
-	public List<place> AnalysisJson (String jsonString)
-	{
-		List<place> places_temp = null; 
-		JSONObject jsonObject = null;
-			try {
-				jsonObject = new JSONObject(jsonString);
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
-				places_temp = place.JsonToPlaceList(jsonObject.getJSONArray("biz"));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return places_temp;
-		
-	}
-	/*
+	
+	/**
 	 * 使用asnyctask方式进行线程处理
 	 */
 	private class DownloadTask extends AsyncTask<Void, integer, String>
@@ -121,6 +132,9 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 			
 		}
 		 protected void onPostExecute(String result) {
+		  /*
+			* 解析返回的json数据，读取到list中
+			*/
 			 jsonString= result;
 			 Log.i("post", "success");
 			 Log.e("receive", jsonString);
@@ -138,6 +152,10 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				//json解析结束，数据位于places中
+			/*
+			 * 加载数据到HashMap
+			 */
 			mData = new ArrayList<Map<String, Object>>();
 			 Log.i("receive1", places.get(0).getAddr());
 			 for(place tempPlace : places)
@@ -153,137 +171,90 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 					Log.i("image_url",tempPlace.getImg_url());
 					Log.i("map is empty", String.valueOf(map.isEmpty()));
 					mData.add(map);
+					
 				}
-			 SimpleAdapter mSchedule = new SimpleAdapter(activity, 
+			 /*
+			  * 设置adapter
+			  */
+			 ItemAdapter adapter = new  ItemAdapter();
+			 setListAdapter(adapter);
+			/* SimpleAdapter mSchedule = new SimpleAdapter(activity, 
 						mData,
 						R.layout.listitem_main,// ListItem的XML实现
+						//HashMap标记
 						new String[] { "name", "addr","tel" },
 						//TextView ID
 						new int[] { R.id.place_name, R.id.place_addr,R.id.place_tel });
-			setListAdapter(mSchedule);
+			setListAdapter(mSchedule);*/
 	        //testTextView.setText(result);
 	     }
 			
 		}
-	class ImageSimpleAdapter extends SimpleAdapter {
-		private int[] mTo;
-		private String[] mFrom;
-		private ViewBinder mViewBinder;
-		private List<? extends Map<String, ?>> mData;
-		private int mResource;
-		private int mDropDownResource;
-		private LayoutInflater mInflater;
+	class ItemAdapter extends BaseAdapter {
 
-		public ImageSimpleAdapter(Context context,
-				List<? extends Map<String, ?>> data, int resource, String[] from,
-				int[] to) {
-			super(context, data, resource, from, to);
-			mTo = to;
-			mFrom = from;
-			mData = data;
-			mResource = mDropDownResource = resource;
-			mInflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
+		private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-		public View getView(int position, View convertView, ViewGroup parent) {
-			return createViewFromResource(position, convertView, parent, mResource);
+		private class ViewHolder {
+			public TextView text_name;
+			public TextView text_addr;
+			public TextView text_tel;
+			public ImageView image;
 		}
 
 		@Override
-		public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			return createViewFromResource(position, convertView, parent,
-					mDropDownResource);
+		public int getCount() {
+			return places.size();
 		}
 
-		private View createViewFromResource(int position, View convertView,
-				ViewGroup parent, int resource) {
-			View v;
+		@Override
+		public Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			View view = convertView;
+			final ViewHolder holder;
 			if (convertView == null) {
-				v = mInflater.inflate(resource, parent, false);
+				view = activity.getLayoutInflater().inflate(R.layout.listitem_main, parent, false);
+				holder = new ViewHolder();
+				holder.text_name = (TextView) view.findViewById(R.id.place_name);
+				holder.text_addr = (TextView)view.findViewById(R.id.place_addr);
+				holder.text_tel =  (TextView)view.findViewById(R.id.place_tel);
+				holder.image = (ImageView) view.findViewById(R.id.place_pic);
+				view.setTag(holder);
 			} else {
-				v = convertView;
+				holder = (ViewHolder) view.getTag();
 			}
-
-			bindView(position, v);
-
-			return v;
+			holder.text_name.setText(places.get(position).getName());
+			holder.text_addr.setText(places.get(position).getAddr());
+			holder.text_tel.setText(places.get(position).getTel());
+			
+			ImageLoader.getInstance().displayImage(places.get(position).getImg_url(), holder.image);
+			return view;
+			
 		}
+	}
 
-		private void bindView(int position, View view) {
-			final Map dataSet = mData.get(position);
-			if (dataSet == null) {
-				return;
-			}
+	private static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {
 
-			final ViewBinder binder = mViewBinder;
-			final String[] from = mFrom;
-			final int[] to = mTo;
-			final int count = to.length;
+		static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
-			for (int i = 0; i < count; i++) {
-				final View v = view.findViewById(to[i]);
-				if (v != null) {
-					final Object data = dataSet.get(from[i]);
-					String text = data == null ? "" : data.toString();
-					if (text == null) {
-						text = "";
-					}
-
-					boolean bound = false;
-					if (binder != null) {
-						bound = binder.setViewValue(v, data, text);
-					}
-
-					if (!bound) {
-						if (v instanceof Checkable) {
-							if (data instanceof Boolean) {
-								((Checkable) v).setChecked((Boolean) data);
-							} else if (v instanceof TextView) {
-								// Note: keep the instanceof TextView check at the
-								// bottom of these
-								// ifs since a lot of views are TextViews (e.g.
-								// CheckBoxes).
-								setViewText((TextView) v, text);
-							} else {
-								throw new IllegalStateException(v.getClass()
-										.getName()
-										+ " should be bound to a Boolean, not a "
-										+ (data == null ? "<unknown type>"
-												: data.getClass()));
-							}
-						} else if (v instanceof TextView) {
-							// Note: keep the instanceof TextView check at the
-							// bottom of these
-							// ifs since a lot of views are TextViews (e.g.
-							// CheckBoxes).
-							setViewText((TextView) v, text);
-						} else if (v instanceof ImageView) {
-							if (data instanceof Integer) {
-								setViewImage((ImageView) v, (Integer) data);
-							} else if (data instanceof Bitmap) {// ���������һ��
-								setViewImage((ImageView) v, (Bitmap) data);
-							} else {
-								setViewImage((ImageView) v, text);
-							}
-						} else {
-							throw new IllegalStateException(
-									v.getClass().getName()
-											+ " is not a view that can be bounds by this SimpleAdapter");
-						}
-					}
+		@Override
+		public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+			if (loadedImage != null) {
+				ImageView imageView = (ImageView) view;
+				boolean firstDisplay = !displayedImages.contains(imageUri);
+				if (firstDisplay) {
+					FadeInBitmapDisplayer.animate(imageView, 500);
+					displayedImages.add(imageUri);
 				}
 			}
-		}
-
-		/**
-		 * ����������������Bitmap���Ͳ���
-		 * 
-		 * @param v
-		 * @param bitmap
-		 */
-		public void setViewImage(ImageView v, Bitmap bitmap) {
-			v.setImageBitmap(bitmap);
 		}
 	}
 }
