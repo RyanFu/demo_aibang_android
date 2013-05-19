@@ -52,16 +52,10 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 public class SimpleListFragment extends android.support.v4.app.ListFragment{
 	
 	private List<place> places;
-	private String jsonString;
-//	private ListView listView;
-	private List<Map<String, Object>> mData=null;
-	
 	public Context context; // 存储上下文对象  
     public Activity activity; // 存储上下文对象  
-	
 	private ImageLoader imageLoader;
 	private DisplayImageOptions options ;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState); 
@@ -97,20 +91,14 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
         .displayer(new FakeBitmapDisplayer())
         .build();
 		//universe-image-loader 设置结束
-       new DownloadTask().execute();	
-       
 		
-         
-	
-		
-		
+		//启动新线程
+       new DownloadTask().execute();		
 	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.simple_list_fragment, container, false);
 	}
-	
 	/**
 	 * 使用asnyctask方式进行线程处理
 	 */
@@ -129,18 +117,16 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 				e.printStackTrace();
 			}
 			return resultString;
-			
 		}
 		 protected void onPostExecute(String result) {
 		  /*
-			* 解析返回的json数据，读取到list中
-			*/
-			 jsonString= result;
+		   * 解析返回的json数据，读取到list中
+		   */
 			 Log.i("post", "success");
-			 Log.e("receive", jsonString);
+			 Log.e("receive", result);
 			 JSONObject jsonObject = null;
 				try {
-					jsonObject = new JSONObject(jsonString);
+					jsonObject = new JSONObject(result);
 					Log.i("jsonanalysis", "success");
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
@@ -152,40 +138,12 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//json解析结束，数据位于places中
-			/*
-			 * 加载数据到HashMap
-			 */
-			mData = new ArrayList<Map<String, Object>>();
-			 Log.i("receive1", places.get(0).getAddr());
-			 for(place tempPlace : places)
-				{
-					HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("name", tempPlace.getName());
-					Log.i("name", tempPlace.getName());
-					map.put("addr", tempPlace.getAddr());
-					Log.i("addr", tempPlace.getAddr());
-					map.put("tel", tempPlace.getTel());
-					Log.i("tel",tempPlace.getTel());
-					map.put("image_url", tempPlace.getImg_url());
-					Log.i("image_url",tempPlace.getImg_url());
-					Log.i("map is empty", String.valueOf(map.isEmpty()));
-					mData.add(map);
-					
-				}
+				//json解析结束，数据已位于places中
 			 /*
 			  * 设置adapter
 			  */
 			 ItemAdapter adapter = new  ItemAdapter();
 			 setListAdapter(adapter);
-			/* SimpleAdapter mSchedule = new SimpleAdapter(activity, 
-						mData,
-						R.layout.listitem_main,// ListItem的XML实现
-						//HashMap标记
-						new String[] { "name", "addr","tel" },
-						//TextView ID
-						new int[] { R.id.place_name, R.id.place_addr,R.id.place_tel });
-			setListAdapter(mSchedule);*/
 	        //testTextView.setText(result);
 	     }
 			
