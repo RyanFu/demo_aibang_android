@@ -1,29 +1,27 @@
 package com.sssta.demo_aibang_android;
 
-import java.io.IOException;
-
-import com.sssta.demo_aibang_android.R.string;
-
-import android.R.integer;
-import android.os.AsyncTask;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity {
-	//private String resultString = null;
-	private TextView testTextView;
-	public static final String ipAddress = "192.168.1.135"; 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-	//	SimpleListFragment simpleListFragment = new SimpleListFragment();
-	//	getSupportFragmentManager().beginTransaction().replace(R.id.container, simpleListFragment).commit();
-	//	testTextView =(TextView) findViewById(R.id.test_testview);
-		/*
+public class MainActivity extends FragmentActivity implements TabListener {
+    //private String resultString = null;
+    private TextView testTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+       
+        //	SimpleListFragment simpleListFragment = new SimpleListFragment();
+        //	getSupportFragmentManager().beginTransaction().replace(R.id.container, simpleListFragment).commit();
+        //	testTextView =(TextView) findViewById(R.id.test_testview);
+        /*
 		 *使用post的方式把对ui tookit的控制加入到主线程
 		 */
 		 /*new Thread(new Runnable() {
@@ -52,18 +50,17 @@ public class MainActivity extends FragmentActivity {
 			  
 		        }
 		    }).start();*/
-	//	new DownloadTask().execute();
-		
-		
-		
-	}
+        //	new DownloadTask().execute();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 	/*
 	 * 使用asnyctask方式进行线程处理
 	 */
@@ -89,6 +86,26 @@ public class MainActivity extends FragmentActivity {
 	     }
 			
 		}*/
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
+}
 

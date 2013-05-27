@@ -2,6 +2,7 @@ package com.sssta.demo_aibang_android;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +89,12 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.simple_list_fragment, container, false);
+	}
+	@Override
+	public void onPause()
+	{
+		//to do 
+		super.onPause();
 	}
 	/**
 	 * 使用asnyctask方式进行线程处理
@@ -182,6 +189,7 @@ public class SimpleListFragment extends android.support.v4.app.ListFragment{
 			holder.text_name.setText(places.get(position).getName());
 			holder.text_addr.setText(places.get(position).getAddr());
 			holder.text_tel.setText(places.get(position).getTel());
+			
 			
 			ImageLoader.getInstance().displayImage(places.get(position).getImg_url(), holder.image);
 			return view;
